@@ -11,3 +11,4 @@ plot(x = database[, dateTime]
      , y = database[, Global_active_power]
      , type="l", xlab="", ylab="Global Active Power (kilowatts)")
 
+Click here for see the image http://prntscr.com/mbxb2e
