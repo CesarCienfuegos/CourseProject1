@@ -2,15 +2,15 @@ setwd("C:/Users/CESAR/Desktop/exdata_data_household_power_consumption (1)")
 library("data.table")
 help(.SD)
 #HISTOGRAM
-database <-data.table::fread(input = "household_power_consumption.txt"
-                  , na.strings="?"
-)
-database[, Global_active_power := lapply(.SD, as.numeric), .SDcols = c("Global_active_power")]
-database[, Date := lapply(.SD, as.Date, "%d/%m/%Y"), .SDcols = c("Date")]
-database <- database[(Date >= "2007-02-01") & (Date <= "2007-02-02")] 
-png("plot1.png", width=480, height=480)
-## Plot 1
-hist(database[, Global_active_power], main="Global Active Power", 
-     xlab="Global Active Power (kilowatts)", ylab="Frequency", col="Red")
+data<- read.table("exdata-data-household_power_consumption/household_power_consumption.txt", sep=";", header = T,
+                  stringsAsFactors = FALSE, dec = ".")
 
+
+data<- subset(data, data$Date %in% c("1/2/2007","2/2/2007"))
+
+data$Global_active_power<- as.numeric(data$Global_active_power)
+
+png("Plot_1.png", width = 480, height = 480)
+hist(data$Global_active_power, main = "Global Active Power", xlab = "Global Active Power (kilowatts)", ylab = "Frequency", col="red")
+dev.off()
 Click here for see the image http://prntscr.com/mbx7nj
