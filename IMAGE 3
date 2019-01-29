@@ -3,30 +3,29 @@ library("data.table")
 setwd("C:/Users/CESAR/Desktop/exdata_data_household_power_consumption (1)")
 
 #Reads in data from file then subsets data for specified dates
-database <- data.table::fread(input = "household_power_consumption.txt"
-                             , na.strings="?"
-)
+data<- read.table("exdata-data-household_power_consumption/household_power_consumption.txt", sep=";", header = T,
+                  stringsAsFactors = FALSE, dec = ".")
 
-# Prevents Scientific Notation
-database[, Global_active_power := lapply(.SD, as.numeric), .SDcols = c("Global_active_power")]
 
-# Making a POSIXct date capable of being filtered and graphed by time of day
-database[, dateTime := as.POSIXct(paste(Date, Time), format = "%d/%m/%Y %H:%M:%S")]
+data<- subset(data, data$Date %in% c("1/2/2007","2/2/2007"))
 
-# Filter Dates for 2007-02-01 and 2007-02-02
-database <- database[(dateTime >= "2007-02-01") & (dateTime < "2007-02-03")]
+data$Global_active_power<- as.numeric(data$Global_active_power)
 
-png("plot3.png", width=480, height=480)
+datetime <- strptime(paste(data$Date, data$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
 
-# Plot 3
-plot(database[, dateTime], database[, Sub_metering_1], type="l", xlab="", ylab="Energy sub metering")
-lines(database[, dateTime], database[, Sub_metering_2],col="red")
-lines(database[, dateTime], database[, Sub_metering_3],col="blue")
-legend("topright"
-       , col=c("black","red","blue")
-       , c("Sub_metering_1  ","Sub_metering_2  ", "Sub_metering_3  ")
-       ,lty=c(1,1), lwd=c(1,1))
+data$Sub_metering_1<- as.numeric(data$Sub_metering_1)
+data$Sub_metering_2<- as.numeric(data$Sub_metering_2)
+data$Sub_metering_3<- as.numeric(data$Sub_metering_3)
 
-Click here for see the image http://prntscr.com/mbxcg4
+png("plot3.png", width = 480, height = 480)
+with(data, {
+  plot(datetime,data$Sub_metering_1, type="l",
+       ylab="Energy sub metering")
+  lines(datetime,data$Sub_metering_2,col='Red')
+  lines(datetime,data$Sub_metering_3,col='Blue')
+})
+legend("topright", col=c("black", "red", "blue"), 
+       legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),lty = 1, lwd = 2)
 dev.off()
-
+Click here for see the image http://prntscr.com/mbxcg4
+ 
